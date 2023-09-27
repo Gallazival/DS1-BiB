@@ -12,36 +12,42 @@
   <link rel="stylesheet" type="text/css" href="css/results.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 
-  <title>Add Empregados</title>
+  <title>Add livros</title>
 </head>
 
 <body>
   <div class="master-container">
-    <h1> Adicionar empregados</h1>
+    <h1> Adicionar livros</h1>
 
     <form class="form-container" action="/add" method="post">
       <div class="form-group">
-        <label for="nome">Nome:</label>
-        <input type="text" class="form-control" id="nome" name="nome">
+        <label for="titulo">Título:</label>
+        <input type="text" class="form-control" id="titulo" name="titulo">
       </div>
 
       <div class="form-group">
-        <label for="salario_bruto">Salario Bruto:</label>
-        <input type="text" class="form-control" id="salario_bruto" name="salario_bruto">
+        <label for="autor">Autor:</label>
+        <input type="text" class="form-control" id="autor" name="autor">
       </div>
 
       <div class="form-group">
-        <label for="depart">Departamento:<br><br>
-          1- Administrativo <br>
-          2 - Designer <br>
-          3 - Contabil <br>
-          4 - Fábrica</label>
-        <input type="text" class="form-control" id="depart" name="depart">
+        <label for="ano">Ano de publicação:</label>
+        <input type="text" class="form-control" id="ano" name="ano">
+      </div>
+
+      <div class="form-group">
+        <label for="editora">Editora:</label>
+        <input type="text" class="form-control" id="autor" name="autor">
+      </div>
+
+      <div class="form-group">
+        <label for="quantidade">Quantidade:</label>
+        <input type="text" class="form-control" id="quantidade" name="quantidade">
       </div>
 
       <button type="submit" class="btn btn-primary">Enviar</button>
     </form>
-    <a href="/"><button type="submit" class="btn btn-primary" style="margin-top: 10px;">Mostrar Empregados</button></a>
+    <a href="/filtro"><button type="submit" class="btn btn-primary" style="margin-top: 10px;">Pesquisa Livros</button></a>
   </div>
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->

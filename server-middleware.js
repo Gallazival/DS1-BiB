@@ -1,5 +1,7 @@
 const express = require('express')
 
+const helpers = require("./helpers/helpers");
+
 const path = require('path')
 const bodyParser = require('body-parser');
 const app = express();
@@ -50,4 +52,4 @@ app.listen(3000, () => {
 	console.log('app is running');
 });
 
-
+app.get('/');
