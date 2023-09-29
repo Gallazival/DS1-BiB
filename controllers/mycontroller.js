@@ -1,8 +1,8 @@
 const { sequelize, Sequelize } = require ('../config/database')
 
-// const user = require('../models/user')(sequelize,Sequelize)
-// const livros = require('../models/user')(sequelize,Sequelize)
-// const emprestimos = require('../models/user')(sequelize,Sequelize)
+const user = require('../models/user')(sequelize,Sequelize)
+const livros = require('../models/user')(sequelize,Sequelize)
+const emprestimos = require('../models/user')(sequelize,Sequelize)
 // validator
 // const { validationResult } = require('express-validator');
 
@@ -13,8 +13,11 @@ exports.pagLogin = async (req,res) => {
 }
 
 exports.validator = async (req,res) => {
-    res.render("Pesquisa_livros");
+    const ResultadoLivros = await livros.findAll();
+    const Emprestimos = await emprestimos.findAll();
+    res.render("Pesquisa_livros", {ResultadoLivros , Emprestimos})
 }
+
 // exports.filtro = async (req,res) => {
 //     const Op = Sequelize.Op;
 //     const {filtro, salario} = req.body;
@@ -29,4 +32,28 @@ exports.validator = async (req,res) => {
 //     res.render("myresult", {empregadosResultados});
 // }
 
+// exports.novoUser = async (req,res) => {
+//     const { nome, email, senha } = req.body;
+//     await users.create({ nome, email, senha });
+//     res. redirect('/');
+// }
 
+exports.addLivro = async (req,res) => {
+    const { titulo, autor, ano, editora, quantidade } = req.body;
+    await livros.create({ titulo, autor, ano, editora, quantidade });
+    res.redirect('/filtro');
+};
+
+exports.deletarLivro =  async(req, res) => {
+  const id = req.params.idLivro;
+  const qnt = req.params.quantidade;
+  if(qnt == 1){
+    await livros.destroy({ where: { id } });
+    res.redirect('/filtro');
+  }
+  else if(qnt >= 2) {
+  const {quantidade} = int(qnt)-1;
+    await livros.update({quantidade}, { where: { id }});
+    res.redirect('/filtro');
+  }
+};

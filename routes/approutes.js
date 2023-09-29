@@ -6,10 +6,10 @@ var myController = require("../controllers/mycontroller")
 
 
 router.get("/", myController.pagLogin)
-router.post("/login", myController.validator)
+router.post("/", myController.validator)
 
 // router.get("/cadastro", myController.pagCadastro)
-// router.post("/cadastro", myController.criar)
+// router.post("/cadastro", myController.novoUser)
 
 // router.get("/filtro", myController.pagFiltro)
 // router.post("/filtro", myController.filtro)
@@ -20,5 +20,6 @@ router.post("/login", myController.validator)
 // router.post("/add", myController.addLivro)
 
 //router.get("/meusLivros", myController.pagUser)
+
 
 module.exports = router 

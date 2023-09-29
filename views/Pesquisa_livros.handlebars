@@ -35,24 +35,77 @@
             <th style="width: 20%;">Título</th>
             <th style="width: 15%;">Autor</th>
             <th style="width: 15%;">Editora</th>
-            <th style="width: 20%;">Quem Pegou:</th>
-            <th style="width: 20%;">Quantidade</th>
+            <th style="width: 20%;">Quem Pegou (ID):</th>
         </tr>
         {{#each ResultadoLivros}}
-        <tr>
-            <td style="width: 10%;">{{idLivro}}</td>
-            <td style="width: 20%;">{{titulo}}</td>
-            <td style="width: 15%;">{{autor}}</td>
-            <td style="width: 15%;">{{editora}}</td>
-            <td style="width: 20%;">{{user}}</td>
-            <td style="width: 20%;">{{quantidade}}</td>
-            <td style="width: 20%;">
-                {{#ifEqual idUser 0}}
-                <a href="/deletarLivro/{{idLivro}}"><button class="btn btn-danger bi bi-trash-fill"> Deletar</button></a>
-                {{/ifEqual}}
-            </td>
-            
-        </tr>
+            {{let qnt = int(ResultadoLivros.quantidade);}}
+            {{#if(qnt> 1)}}
+                {{#if(Emprestimos.idLivroEmp.includes(idLivro) == true) }}
+                    {{#each Emprestimos}}
+                        {{#if(Emprestimos.idLivroEmp == ResultadoLivros.idLivro)}}
+                            <tr>
+                                <td style="width: 10%;">{{idLivro}}</td>
+                                <td style="width: 20%;">{{titulo}}</td>
+                                <td style="width: 15%;">{{autor}}</td>
+                                <td style="width: 15%;">{{editora}}</td>
+                                <td style="width: 20%;">{{Emprestimos.idUserEmp}}</td>
+                                <td style="width: 20%;">Emprestado</td>
+                                <td style="width: 20%;">
+                                    {{#ifEqual idUser 0}}
+                                    <a href="/deletarLivro/{{idLivro}}"><button class="btn btn-danger bi bi-trash-fill"> Deletar</button></a>
+                                    {{/ifEqual}}
+                                </td>
+                            </tr>
+                        {{/if}}
+                    {{/each}}
+                {{else}}
+                    <tr>
+                        <td style="width: 10%;">{{idLivro}}</td>
+                        <td style="width: 20%;">{{titulo}}</td>
+                        <td style="width: 15%;">{{autor}}</td>
+                        <td style="width: 15%;">{{editora}}</td>
+                        <td style="width: 20%;">Disponível</td>
+                        <td style="width: 20%;">Emprestado</td>
+                        <td style="width: 20%;">
+                            {{#ifEqual idUser 0}}
+                            <a href="/deletarLivro/{{idLivro}}"><button class="btn btn-danger bi bi-trash-fill"> Deletar</button></a>
+                            {{/ifEqual}}
+                        </td>
+                    </tr>
+            {{else}}
+                {{#if(Emprestimos.idLivroEmp.includes(idLivro) == true) }}
+                    {{#each Emprestimos}}
+                        {{#if(Emprestimos.idLivroEmp == ResultadoLivros.idLivro)}}
+                            <tr>
+                                <td style="width: 10%;">{{idLivro}}</td>
+                                <td style="width: 20%;">{{titulo}}</td>
+                                <td style="width: 15%;">{{autor}}</td>
+                                <td style="width: 15%;">{{editora}}</td>
+                                <td style="width: 20%;">ARRUMAR AQUI BUSCAR PESSOA</td>
+                                <td style="width: 20%;">
+                                    {{#ifEqual idUser 0}}
+                                    <a href="/deletarLivro/{{idLivro}}"><button class="btn btn-danger bi bi-trash-fill"> Deletar</button></a>
+                                    {{/ifEqual}}
+                                </td>
+                            </tr>
+                        {{/if}}
+                    {{/each}}
+                {{else}}
+                    <tr>
+                        <td style="width: 10%;">{{idLivro}}</td>
+                        <td style="width: 20%;">{{titulo}}</td>
+                        <td style="width: 15%;">{{autor}}</td>
+                        <td style="width: 15%;">{{editora}}</td>
+                        <td style="width: 20%;">Disponível</td>
+                        <td style="width: 20%;">1</td>
+                        <td style="width: 20%;">
+                            {{#ifEqual idUser 0}}
+                            <a href="/deletarLivro/{{idLivro}}"><button class="btn btn-danger bi bi-trash-fill"> Deletar</button></a>
+                            {{/ifEqual}}
+                        </td>
+                    </tr>
+                {{/if}}
+            {{/if}}
         {{/each}}
     </table>
     <a href="/add"><button class="btn btn-primary">Adicionar livros</button></a>
