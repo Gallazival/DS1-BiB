@@ -18,6 +18,29 @@ exports.validator = async (req,res) => {
     res.render("Pesquisa_livros", {ResultadoLivros , Emprestimos})
 }
 
+exports.auth = async (req, res) => {
+  const {nome, email, senha} = req.body;
+  user.findOne({where: {email : email}}).then(async function (find){
+    if (bcrypt.compareSync(senha, find.senha)){
+      req.session.entrou = true;
+      req.session.nome = {nome}
+      req.session.success = 'Usuário' + find.nome + 'logado.'
+      res.redirect('/filtro')
+    }
+    else{
+      console.log('Senha incorreta!');
+      res.redirect('/');
+    }
+  });
+};
+
+exports.logout = async (req, res) => {
+  if (req.session.entrou == true) {
+    req.session.destroy();
+  }
+  res.redirect('/');
+}
+
 // exports.filtro = async (req,res) => {
 //     const Op = Sequelize.Op;
 //     const {filtro, salario} = req.body;
@@ -32,11 +55,14 @@ exports.validator = async (req,res) => {
 //     res.render("myresult", {empregadosResultados});
 // }
 
-// exports.novoUser = async (req,res) => {
-//     const { nome, email, senha } = req.body;
-//     await users.create({ nome, email, senha });
-//     res. redirect('/');
-// }
+exports.novoUser = async (req,res) => {
+    const { nome, email, senha } = req.body;
+    bcrypt.hash({ senha }, 12).then(hash => {
+    data.password = hash; 
+    });
+    await users.create({ nome, email, senha });
+    res. redirect('/');
+}
 
 exports.addLivro = async (req,res) => {
     const { titulo, autor, ano, editora, quantidade } = req.body;
