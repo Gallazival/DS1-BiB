@@ -1,38 +1,77 @@
-const { sequelize, Sequelize } = require ('../config/database')
+const { sequelize, Sequelize } = require ('../config/database');
 
-const user = require('../models/user')(sequelize,Sequelize)
-const livros = require('../models/user')(sequelize,Sequelize)
-const emprestimos = require('../models/user')(sequelize,Sequelize)
+const user = require('../models/user')(sequelize,Sequelize);
+const livros = require('../models/livros')(sequelize,Sequelize);
+const emprestimo = require('../models/emprestimo')(sequelize,Sequelize);
+const bcrypt = require('bcrypt');
 // validator
 // const { validationResult } = require('express-validator');
 
 
 
 exports.pagLogin = async (req,res) => {
-    res.render("Login");
+    const error = req.flash('error');
+    res.render("Login", {error});
 }
 
-exports.validator = async (req,res) => {
+exports.pagFiltro = async (req,res) => {
+    const error = req.flash('error');
     const ResultadoLivros = await livros.findAll();
-    const Emprestimos = await emprestimos.findAll();
-    res.render("Pesquisa_livros", {ResultadoLivros , Emprestimos})
+    const Emprestimos = await emprestimo.findAll();
+    const username = req.session.nome;
+    const cargo = req.session.cargo;
+    if(req.session && req.session.entrou){
+    if(cargo==0){
+    res.render("Pesquisa_livrosAdm", {ResultadoLivros , Emprestimos, username, cargo, error})
+    }else{
+    res.render("Pesquisa_livros", {ResultadoLivros , Emprestimos, username, cargo, error})
+    }
+  }else{
+    res.redirect("/");
+  }
 }
 
-exports.auth = async (req, res) => {
-  const {nome, email, senha} = req.body;
-  user.findOne({where: {email : email}}).then(async function (find){
-    if (bcrypt.compareSync(senha, find.senha)){
+exports.pagUsers = async (req,res) => {
+    const ResultadoUsers = await user.findAll();
+    res.render("Users", {ResultadoUsers});
+}
+
+exports.pagMeusLivros = async (req,res) => {
+  const id = req.session.idUser;
+    const ResultadoLivros = await emprestimo.findAll({
+      where: { idUserEmp: id },
+      include: [
+        {
+          model: livros,
+          attributes: ['idLivro'],
+          where: { idLivro: Sequelize.col('emprestimo.idLivroEmp') },
+        },
+      ],
+    });
+    console.log(ResultadoLivros)
+    res.render("Users", {ResultadoLivros});
+}
+
+exports.auth = async (req, res, next) => {
+  const {email, senha} = req.body;
+  usuario = await user.findOne({where: {email : email}})
+  if (usuario) {
+    if (bcrypt.compareSync(senha, usuario.senha)){
       req.session.entrou = true;
-      req.session.nome = {nome}
-      req.session.success = 'Usuário' + find.nome + 'logado.'
-      res.redirect('/filtro')
-    }
-    else{
-      console.log('Senha incorreta!');
+      req.session.nome = usuario.nome;
+      req.session.cargo = usuario.cargo;
+      req.session.idUser = usuario.idUser;
+      req.session.success = 'Usuário' + usuario.nome + 'logado.';
+      res.redirect('/filtro');
+    }else{
+      req.flash('error', 'Senha incorreta, Login invalido!')
       res.redirect('/');
     }
-  });
-};
+  }else{
+        req.flash('error', 'Email incorreta, Login invalido!')
+      res.redirect('/');
+  }
+  };
 
 exports.logout = async (req, res) => {
   if (req.session.entrou == true) {
@@ -55,31 +94,98 @@ exports.logout = async (req, res) => {
 //     res.render("myresult", {empregadosResultados});
 // }
 
+exports.pagCadastro = async (req,res) => {
+    res.render("Cadastro");
+}
 exports.novoUser = async (req,res) => {
-    const { nome, email, senha } = req.body;
-    bcrypt.hash({ senha }, 12).then(hash => {
-    data.password = hash; 
-    });
-    await users.create({ nome, email, senha });
-    res. redirect('/');
+    const { nome, email, senha, cargo } = req.body;
+    const senhaHash = await bcrypt.hash(senha, 12);
+    let adm
+    if(cargo!= 0){
+        adm = 1
+    }else{
+      adm = 0
+    }
+    await user.create({ nome, email, senha:senhaHash, cargo:adm });
+    res.redirect('/');
 }
 
 exports.addLivro = async (req,res) => {
+    console.log(req.body)
     const { titulo, autor, ano, editora, quantidade } = req.body;
     await livros.create({ titulo, autor, ano, editora, quantidade });
     res.redirect('/filtro');
 };
 
+exports.pagAdd = async (req,res) => {
+    res.render('Add_livros');
+};
+
+
 exports.deletarLivro =  async(req, res) => {
   const id = req.params.idLivro;
-  const qnt = req.params.quantidade;
-  if(qnt == 1){
-    await livros.destroy({ where: { id } });
+  await livros.destroy({ where: { idLivro : id } });
+  await emprestimo.destroy({ where: {idLivroEmp: id}})
     res.redirect('/filtro');
+  };
+
+exports.pegaEmp = async(req, res, next) => {
+  const id = req.params.idLivro;
+  const user = req.session.idUser;
+  let livro = await livros.findOne({where: {idLivro: id}});
+  const qntLivroEmp = await emprestimo.count({where: {idLivroEmp: id}})
+  console.log(qntLivroEmp);
+  if(qntLivroEmp<livro.quantidade+qntLivroEmp){
+     await emprestimo.create({idUserEmp:user, idLivroEmp:id});
+     let quantidade = livro.quantidade-1;
+     await livros.update({quantidade}, { where: { idLivro : id }});
+     res.redirect('/filtro');
+}else{
+    req.flash('error', 'Não é possível pegar emprestado esse livro')
+    res.redirect("/filtro")
   }
-  else if(qnt >= 2) {
-  const {quantidade} = int(qnt)-1;
-    await livros.update({quantidade}, { where: { id }});
-    res.redirect('/filtro');
-  }
+}
+
+exports.devolveLivro =  async(req, res) => {
+  const id = req.params.idLivroEmp;
+  const qnt = await livros.findOne({where: {idLivro : id}}).quantidade;
+  const {quantidade} = parseInt(qnt)+1;
+  await livros.update({quantidade}, { where: { idLivro : id }});
+  await emprestimo.destroy({ where: { id : id } });
+  res.redirect('/filtro');
 };
+
+exports.deletarUser = async(req,res) => {
+  const id = req.params.idUser;
+  await user.destroy({where: { idUser : id } });
+  res.redirect('/users');
+}
+
+exports.modLivro = async (req,res) => {
+    const id = req.params.idLivro;
+    const {titulo, autor, ano, editora} = req.body;
+    console.log({titulo, autor, ano, editora})
+    await livros.update({titulo, autor, ano ,editora}, { where: {idLivro : id}});
+    res.redirect('/filtro');
+}
+
+exports.modUser = async (req,res) => {
+  console.log(req.params.idUser)
+   const id = req.params.idUser;
+   const {nome, email, cargo} = req.body;
+   await user.update({nome, email, cargo}, { where: {idUser : id}});
+   res.redirect('/users');
+}
+
+exports.pagModLivro = async (req,res) => {
+   const id = req.params.idLivro;
+   const ResultadoLivros = await livros.findByPk(id);
+   res.render("Edit_Livros", {ResultadoLivros, idLivro: id});
+}
+
+
+exports.pagModUser = async (req,res) => {
+   const id = req.params.idUser;
+   const ResultadoUsers = await user.findByPk(id);
+   res.render("Edit_User", {ResultadoUsers, idUser: id});
+}

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/results.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
+    <title>Mod livros</title>
+</head>
+
+<body>
+    <div class="master-container">
+        <h1> Modificar livros</h1>
+
+        <form class="form-container" action="/modLivro/{{idLivro}}" method="post">
+            <div class="form-group">
+                <label for="titulo">Título:</label>
+                <input type="text" class="form-control" id="titulo" name="titulo" value="{{ResultadoLivros.titulo}}">
+            </div>
+
+            <div class="form-group">
+                <label for="autor">Autor:</label>
+                <input type="text" class="form-control" id="autor" name="autor" value="{{ResultadoLivros.autor}}">
+            </div>
+
+            <div class="form-group">
+                <label for="ano">Ano de publicação:</label>
+                <input type="text" class="form-control" id="ano" name="ano" value="{{ResultadoLivros.ano}}">
+            </div>
+
+            <div class="form-group">
+                <label for="editora">Editora:</label>
+                <input type="text" class="form-control" id="editora" name="editora" value="{{ResultadoLivros.editora}}">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+        <a href="/filtro"><button type="submit" class="btn btn-primary" style="margin-top: 10px;">Voltar Pesquisa Livros</button></a>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+        </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+        </script>
+</body>
+
+</html>

@@ -12,12 +12,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     {{!--
     <link rel="stylesheet" type="text/css" href="../css/results.css"> --}}
-    <title>Meus livros</title>
+    <script src="../helpers/helpers.js"></script>
+    <title>Pesquisar livros</title>
 </head>
 
 <body>
-    {{#if ResultadoLivros}}
-    <h1>Meus livros:</h1>
+    <h1>Biblioteca:</h1>
+    <h2>Esta logado: {{username}}</h2>
+
     <form action="/filtro" method="post" class="form-container">
         <label for="search">Pesquisar por título:</label>
         <label for="search">Pesquisar por autor:</label>
@@ -28,31 +30,58 @@
         </select>
         <button type="submit" class="btn btn-primary">Pesquisar</button>
     </form>
+    {{#if error}}
+    <div class="alert alert-danger">
+        {{error}}
+    </div>
+    {{/if}}
     <table class="table">
         <tr>
             <th style="width: 10%;">ID</th>
             <th style="width: 20%;">Título</th>
             <th style="width: 15%;">Autor</th>
             <th style="width: 15%;">Editora</th>
+            <th style="width: 20%;">Quem Pegou (ID)</th>
+            <th style="width: 20%;">Disponibilidade</th>
+            <th style="width: 20%;">Botões</th>
         </tr>
+
         {{#each ResultadoLivros}}
-        <tr>
+        
+            <tr>
             <td style="width: 10%;">{{idLivro}}</td>
             <td style="width: 20%;">{{titulo}}</td>
             <td style="width: 15%;">{{autor}}</td>
             <td style="width: 15%;">{{editora}}</td>
-            <td style="width: 20%;">
-                <a href="/deletarLivro/{{idLivro}}"><button class="btn btn-danger bi bi-trash-fill">Devolver Livro</button></a>
+            <td style="width: 20%;">{{#each ../Emprestimos}}
+                {{#ifPegouEmp idUserEmp idLivroEmp ../idLivro}}
+                {{idUserEmp}},
+                {{/ifPegouEmp}}
+                {{/each}}
             </td>
+            <td style="width: 20%;">{{quantidade}}</td>
+            <td style="width: 20%;">
+            <a href="/deletarLivro/{{idLivro}}"><button class="btn btn-danger bi bi-trash-fill">
+                    Deletar</button></a>
+            </td>
+            <td style="width: 20%;">
+                <a href="/pegaEmp/{{idLivro}}"><button class="btn btn-warning">Pegar livro</button></a>
+            </td>
+            <td style="width: 20%;">
+                <a href="/modLivro/{{idLivro}}"><button class="btn btn-primary">Modifica Livro</button></a>
+            </td>
+            {{!-- <td style="width: 20%;">
+                <a href="/devolveLivro/{{idLivro}}"><button class="btn btn-primary">Devolver Livro</button></a>
+            </td> --}}
         </tr>
         {{/each}}
+
     </table>
-    {{/if}}
-    {{#else}}
-    <h1>Nenhum livro pego emprestado</h1>
-    {{/else}}
-    <a href="/filtro"><button class="btn btn-primary">Pesquisar livros</button></a>
-    
+    <a href="/add"><button class="btn btn-primary">Adicionar livros</button></a>
+    <a href="/meusLivros/{{idUser}}"><button class="btn btn-primary">Meus livros</button></a>
+    <a href="/logout"><button class="btn btn-primary">Logout</button></a>
+    <a href="/users"><button class="btn btn-primary">Procurar Users</button></a>
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -4,13 +4,10 @@ const helpers = {
         return options.fn(this);
     };
   },
-  ifQntMaiorQue: (quantidade) => {
-    if (quantidade>1){
-        return true;
-    }else{
-        return false;
-    };
-  }
-};
 
+  ifPegouEmp: (idUserEmp, idLivroEmp, idLivro, options) => {
+    if (idLivroEmp == idLivro){
+        return options.fn({idUserEmp, idLivroEmp, idLivro});
+  }},
+};
 module.exports = helpers;

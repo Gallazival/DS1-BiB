@@ -12,31 +12,32 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     {{!--
     <link rel="stylesheet" type="text/css" href="../css/results.css"> --}}
-    <title>Login</title>
+    <title>Modifica Conta</title>
 </head>
 
 <body>
     <div class="master-container">
-        <h1>Login</h1> 
-            {{#if error}}
-            <div class="alert alert-danger">
-                {{error}}
+        <h1>Modifica conta</h1>
+        <form class="form-container" action="/modUser/{{idUser}}" method="post">
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" class="form-control" id="nome" name="nome" value="{{ResultadoUsers.nome}}">
             </div>
-            {{/if}}
-        <form class="form-container" action="/" method="post">
+
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="text" required class="form-control" id="email" name="email">
+                <input type="text" class="form-control" id="email" name="email" value="{{ResultadoUsers.email}}">
             </div>
-        
             <div class="form-group">
-                <label for="senha">Senha:</label>
-                <input type="text" required class="form-control" id="senha" name="senha">
+                <label for="cargo">Cargo:<br><br>
+                    0 - admin
+                    1 - Usuário
+                </label>
+                <input type="text" class="form-control" id="cargo" name="cargo" value="{{ResultadoUsers.cargo}}">
             </div>
-        
-            <a href="/"><button class="btn btn-primary">Entrar</button></a>
+            <button type="submit" class="btn btn-primary">Salvar</button>
         </form>
-            <a href="/cadastro"><button class="btn btn-primary">Criar Conta</button></a>
+        <a href="/users"><button type="submit" class="btn btn-primary" style="margin-top: 10px;">Fazer login</button></a>
     </div>
 </body>
 
