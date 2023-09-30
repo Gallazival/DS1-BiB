@@ -12,13 +12,13 @@ router.get("/cadastro", myController.pagCadastro)
 router.post("/cadastro", myController.novoUser)
 
 router.get("/filtro", myController.pagFiltro)
-// router.post("/filtro", myController.filtro)
+router.post("/pesquisa", myController.filtro)
 
 router.get("/users", myController.pagUsers)
 router.get("/deletarUser/:idUser", myController.deletarUser)
 
 router.get("/deletarLivro/:idLivro",myController.deletarLivro)
-// router.get("/devolveLivro/:idLivro",myController.devolveLivro)
+router.get("/devolveLivro/:idLivro",myController.devolveLivro)
 router.get("/pegaEmp/:idLivro",myController.pegaEmp)
 
 router.get("/logout", myController.logout)
@@ -26,7 +26,7 @@ router.get("/logout", myController.logout)
 router.get("/add", myController.pagAdd)
 router.post("/add", myController.addLivro)
 
-router.get("/meusLivros:idLivro", myController.pagMeusLivros)
+router.get("/meusLivros", myController.pagMeusLivros)
 
 router.get("/modLivro/:idLivro", myController.pagModLivro)
 router.post("/modLivro/:idLivro", myController.modLivro)

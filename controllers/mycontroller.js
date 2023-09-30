@@ -38,18 +38,27 @@ exports.pagUsers = async (req,res) => {
 
 exports.pagMeusLivros = async (req,res) => {
   const id = req.session.idUser;
-    const ResultadoLivros = await emprestimo.findAll({
-      where: { idUserEmp: id },
-      include: [
-        {
-          model: livros,
-          attributes: ['idLivro'],
-          where: { idLivro: Sequelize.col('emprestimo.idLivroEmp') },
-        },
-      ],
+  const username = req.session.nome;
+    const ResultadoEmprestimos = await emprestimo.findAll({
+      where: { idUserEmp: id }
+    });
+    const qnt = await emprestimo.count({
+      where: { idUserEmp: id }
+    });
+    console.log(ResultadoEmprestimos)
+    if(qnt!=0){
+    const idLivros = ResultadoEmprestimos.map(emprestimo => emprestimo.idLivroEmp);
+    const ResultadoLivros = await livros.findAll({
+      where: { idLivro: idLivros }
     });
     console.log(ResultadoLivros)
-    res.render("Users", {ResultadoLivros});
+    console.log("entrei");
+    res.render("Meus_livros",{ ResultadoLivros, username});
+  }else{
+    req.flash('error', 'Sem emprestimos de livros!')
+    const error = req.flash('error');
+    res.render("Meus_livros",{error});
+  }
 }
 
 exports.auth = async (req, res, next) => {
@@ -80,19 +89,15 @@ exports.logout = async (req, res) => {
   res.redirect('/');
 }
 
-// exports.filtro = async (req,res) => {
-//     const Op = Sequelize.Op;
-//     const {filtro, salario} = req.body;
-//     const {setor} = req.body;
-//     console.log(salario)
-//     let empregadosResultados;
-//     if(setor == 0){
-//         empregadosResultados = await empregados.findAll({ where: {nome: {[Op.substring]: filtro}}, order: [['salario_bruto',salario]]});
-//     }else{
-//         empregadosResultados = await empregados.findAll({ where: {nome: {[Op.substring]: filtro}, depart: setor}, order: [['salario_bruto',salario]]});
-//     }
-//     res.render("myresult", {empregadosResultados});
-// }
+exports.filtro = async (req,res) => {
+  const Emprestimos = await emprestimo.findAll();
+  const username = req.session.nome;
+  const cargo = req.session.cargo;
+  const Op = Sequelize.Op;
+  const {filtro, ano} = req.body;
+  let ResultadoLivros = await livros.findAll({ where: {titulo: {[Op.substring]: filtro}}, order: [["ano",ano]]}); 
+  res.redirect("/filtro", {ResultadoLivros,Emprestimos,username,cargo});
+}
 
 exports.pagCadastro = async (req,res) => {
     res.render("Cadastro");
@@ -147,11 +152,14 @@ exports.pegaEmp = async(req, res, next) => {
 }
 
 exports.devolveLivro =  async(req, res) => {
-  const id = req.params.idLivroEmp;
-  const qnt = await livros.findOne({where: {idLivro : id}}).quantidade;
-  const {quantidade} = parseInt(qnt)+1;
+  const id = req.params.idLivro;
+  const idUser = req.session.idUser;
+  const qntEmp = await emprestimo.count({where: {idLivroEmp : id, idUserEmp : idUser} });
+  const qnt = await livros.findOne({where: {idLivro : id} });
+  const quantidade = Number(qnt.quantidade)+Number(qntEmp);
+  console.log(quantidade)
   await livros.update({quantidade}, { where: { idLivro : id }});
-  await emprestimo.destroy({ where: { id : id } });
+  await emprestimo.destroy({ where: { idLivroEmp : id } });
   res.redirect('/filtro');
 };
 

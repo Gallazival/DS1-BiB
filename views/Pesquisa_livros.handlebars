@@ -20,11 +20,10 @@
     <h1>Biblioteca:</h1>
     <h2>Esta logado: {{username}}</h2>
 
-    <form action="/filtro" method="post" class="form-container">
+    <form action="/pesquisa" method="post" class="form-container">
         <label for="search">Pesquisar por título:</label>
-        <label for="search">Pesquisar por autor:</label>
         <input type="search" name="filtro" id="filtro" value="">
-        <select name="salario" id="salario">
+        <select name="ano" id="ano">
             <option value="DESC">Mais recentes</option>
             <option value="ASC">Mais antigos</option>
         </select>
@@ -40,6 +39,7 @@
             <th style="width: 10%;">ID</th>
             <th style="width: 20%;">Título</th>
             <th style="width: 15%;">Autor</th>
+            <th style="width: 15%;">Ano</th>
             <th style="width: 15%;">Editora</th>
             <th style="width: 20%;">Quem Pegou (ID)</th>
             <th style="width: 20%;">Disponibilidade</th>
@@ -52,6 +52,7 @@
             <td style="width: 10%;">{{idLivro}}</td>
             <td style="width: 20%;">{{titulo}}</td>
             <td style="width: 15%;">{{autor}}</td>
+            <td style="width: 15%;">{{ano}}</td>
             <td style="width: 15%;">{{editora}}</td>
             <td style="width: 20%;">{{#each ../Emprestimos}}
                 {{#ifPegouEmp idUserEmp idLivroEmp ../idLivro}}
